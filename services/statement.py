@@ -1,20 +1,21 @@
 from fastapi import Request
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
-from fastapi.responses import JSONResponse
+
+from core.responses import Response_400
 
 from .crud.update import update_one
 from .crud.create import create_one
-from .crud.get import get_all, get_one_method
+from .crud.get import get_all, get_one_method, get_pagination
 from bson.objectid import ObjectId
 
 
-def get_statements(request: Request, contest_oid: str):
+def get_statements(request: Request, contest_oid: str, page: int, page_size: int, parameter: dict = {}):
     """
     Получить все заявки по oid конкурса
     """
     collection_name = get_contest_collection_name(request, contest_oid)
-    return get_all(request, collection_name)
+    return get_pagination(request, collection_name, page, page_size, parameter)
 
 
 def get_statements_by_user(request: Request, contest_oid: str, user_oid: str):
@@ -34,20 +35,12 @@ def create_statement(request: Request, contest_oid: str, data: dict):
         schema = get_schema_for_statement(request, contest_oid)
 
     except Exception as e:
-        return JSONResponse({
-            "status": False,
-            "data": str(e)
-        }, status_code=400)
-
+        return Response_400()(request, str(e))
     try:
         data = {key: value for key, value in data.items() if key in schema.get("properties", {}) and value != ''}
         validate(instance=data, schema=schema)
     except ValidationError as e:
-        return JSONResponse({
-            "status": False,
-            "data": str(e.message)
-        }, status_code=400)
-
+        return Response_400()(request, e.message)
     return create_one(request, data, collection_name)
 
 
@@ -59,19 +52,12 @@ def update_stamement(request: Request, statement_oid: str, data: dict, contest_o
     try:
         schema = get_schema_for_statement(request, contest_oid)
     except Exception as e:
-        return JSONResponse({
-            "status": False,
-            "data": str(e)
-        }, status_code=400)
-
+        return Response_400()(request, str(e))
     try:
         data = {key: value for key, value in data.items() if key in schema.get("properties", {}) and value != ''}
         validate(instance=data, schema=schema)
     except ValidationError as e:
-        return JSONResponse({
-            "status": False,
-            "data": str(e.message)
-        }, status_code=400)
+        return Response_400()(request, str(e))
     parameter = {'_id': ObjectId(statement_oid)}
     return update_one(request, data, collection_name, parameter)
 

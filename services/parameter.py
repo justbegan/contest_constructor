@@ -1,10 +1,11 @@
 from fastapi import Request
+from bson.objectid import ObjectId
 
 from services.crud.create import create_one
 from services.crud.get import get_all, get_one_method
 from services.crud.delete import delete_one
-from fastapi.responses import JSONResponse
-from bson.objectid import ObjectId
+
+from core.responses import Response_400
 
 
 def create_parameter(request: Request, data: dict):
@@ -14,10 +15,7 @@ def create_parameter(request: Request, data: dict):
     if duplicate is None:
         return create_one(request, data, collection_name)
     else:
-        return JSONResponse({
-            "status": False,
-            "data": "parameter already exists"
-        }, status_code=400)
+        return Response_400()(request, "parameter already exists")
 
 
 def get_parameters(request: Request):
@@ -35,9 +33,4 @@ def delete_parameter_by_oid(request: Request, schema_oid: str):
         schema = delete_one(request, collection_name, parameter)
         return schema
     except Exception as e:
-        return JSONResponse(
-            {
-                "status": False,
-                "data": str(e)
-            }, status_code=400
-        )
+        return Response_400()(request, str(e))

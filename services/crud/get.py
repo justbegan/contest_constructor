@@ -1,8 +1,9 @@
 from fastapi import Request
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
-# from bson.objectid import ObjectId
+import math
+from core.responses import Response_500, Response_200
+from fastapi.responses import JSONResponse
 
 
 def get_all(request: Request, collection_name: str, parameter: dict = {}):
@@ -16,19 +17,9 @@ def get_all(request: Request, collection_name: str, parameter: dict = {}):
             i["_id"] = str(i["_id"])
             result.append(i)
         result = jsonable_encoder(result)
-        return JSONResponse(
-            {
-                "status": True,
-                "data": result
-            }
-        )
+        return Response_200()(result)
     except RequestValidationError as e:
-        return JSONResponse(
-            {
-                "status": False,
-                "data": str(e)
-            }, status_code=500
-        )
+        return Response_500()(request, str(e))
 
 
 def get_one(request: Request, collection_name: str, parameter: dict):
@@ -37,19 +28,9 @@ def get_one(request: Request, collection_name: str, parameter: dict):
     """
     try:
         data = get_one_method(request, collection_name, parameter)
-        return JSONResponse(
-            {
-                "status": True,
-                "data": data
-            }
-        )
+        return Response_200()(data)
     except RequestValidationError as e:
-        return JSONResponse(
-            {
-                "status": False,
-                "data": str(e)
-            }, status_code=500
-        )
+        return Response_500()(request, str(e))
 
 
 def get_one_method(request: Request, collection_name: str, parameter: dict):
@@ -63,3 +44,30 @@ def get_one_method(request: Request, collection_name: str, parameter: dict):
         return result
     except:
         return None
+
+
+def get_pagination(request: Request, collection_name: str, page: int, page_size: int, parameter: dict = {}):
+    """
+    Получить пагинацию
+    """
+    PAGE_SIZE = page_size
+    try:
+        skip = page * PAGE_SIZE - PAGE_SIZE
+        collection_size = request.app.database[collection_name].count_documents(parameter)
+        pages_count = math.ceil(collection_size / PAGE_SIZE)
+        data = request.app.database[collection_name].find(parameter).skip(skip).limit(PAGE_SIZE)
+        result = []
+        for i in data:
+            i["_id"] = str(i["_id"])
+            result.append(i)
+        result = jsonable_encoder(result)
+        return JSONResponse(
+            {
+                "status": True,
+                "data": result,
+                "page": page,
+                "pages_count": pages_count
+            }
+        )
+    except RequestValidationError as e:
+        return Response_500()(request, str(e))

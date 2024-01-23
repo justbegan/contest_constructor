@@ -21,12 +21,13 @@ def create(request: Request, contest_oid: str = '65a767c72e0fe1554e0d3c9a', data
     return create_statement(request, contest_oid, data)
 
 
-@router.get("/get_statements")
-def get(request: Request, contest_oid: str = '65a767c72e0fe1554e0d3c9a'):
+@router.post("/get_statements")
+def get(request: Request, contest_oid: str = '65a767c72e0fe1554e0d3c9a',
+        page: int = 1, page_size: int = 10, parameter: dict = {}):
     """
     Получить все заявки по oid конкурса
     """
-    return get_statements(request, contest_oid)
+    return get_statements(request, contest_oid, page, page_size, parameter)
 
 
 @router.get("/get_statements_by_user")

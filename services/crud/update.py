@@ -1,6 +1,7 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from .get import get_one_method
+from core.responses import Response_500
 
 
 def update_one(request: Request, data: dict, collection_name: str, parameter: dict):
@@ -14,9 +15,4 @@ def update_one(request: Request, data: dict, collection_name: str, parameter: di
         }
         return JSONResponse(result)
     except Exception as e:
-        return JSONResponse(
-            {
-                "status": False,
-                "data": str(e)
-            }, status_code=500
-        )
+        return Response_500()(request, str(e))

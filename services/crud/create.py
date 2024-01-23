@@ -1,5 +1,5 @@
 from fastapi import Request
-from fastapi.responses import JSONResponse
+from core.responses import Response_500, Response_200
 
 
 def create_one(request: Request, data: dict, collection_name: str):
@@ -12,16 +12,7 @@ def create_one(request: Request, data: dict, collection_name: str):
         inserted_id = insert.inserted_id
         inserted_object = request.app.database[collection_name].find_one({"_id": inserted_id})
         inserted_object["_id"] = str(inserted_object["_id"])
-        result = {
-            "status": True,
-            "data": inserted_object
-        }
-        return JSONResponse(result)
+        return Response_200()(inserted_object)
 
     except Exception as e:
-        return JSONResponse(
-            {
-                "status": False,
-                "data": str(e)
-            }, status_code=500
-        )
+        return Response_500()(request, str(e))

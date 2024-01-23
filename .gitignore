@@ -1,2 +1,5 @@
 *.pyc
 *cpython-39*
+venv
+api_log.txt
+.env
