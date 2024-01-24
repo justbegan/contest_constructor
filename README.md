@@ -1,6 +1,6 @@
 1. Создать .env файл
-    ATLAS_URI=mongodb://localhost:27017
-    DB_NAME=table
-    DB_USER=user
-    DB_PASS=pass   
+    <p>ATLAS_URI=mongodb://localhost:27017</p>
+    <p>DB_NAME=table</p>
+    <p>DB_USER=user</p>
+    <p>DB_PASS=pass</p>   
 2. docker-compose up --build -d
