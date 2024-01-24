@@ -30,7 +30,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mongodb_client = MongoClient(config["ATLAS_URI"])
+app.mongodb_client = MongoClient(
+    config["ATLAS_URI"],
+    username=config.get("DB_USER", None),
+    password=config.get("DB_PASS", None)
+)
 app.database = app.mongodb_client[config["DB_NAME"]]
 app.include_router(st_router)
 app.include_router(sc_router)
