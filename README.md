@@ -6,4 +6,3 @@
 2. docker-compose up --build -d
 
 3. Python version 3.11.6
-4. OS Windows
