@@ -35,7 +35,6 @@ def create_statement(request: Request, contest_oid: str, data: dict):
     collection_name = get_contest_collection_name(request, contest_oid)
     try:
         schema = get_schema_for_statement(request, contest_oid)
-        print(schema)
     except Exception as e:
         return Response_400()(request, str(e))
     try:

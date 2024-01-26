@@ -8,11 +8,13 @@ from .crud.get import get_all, get_one, get_one_method
 from core.responses import Response_400
 
 
+collection_name = 'schemas'
+
+
 def create_schema(request: Request, data: Schemas):
     """
     Создает схему
     """
-    collection_name = 'schemas'
     data = jsonable_encoder(data)
     if 'user_oid' not in data['properties']:
         return Response_400()(request, "user_oid not found")
@@ -27,19 +29,18 @@ def create_schema(request: Request, data: Schemas):
         return Response_400()(request, "selected contest already has a schema")
 
 
-def get_schema(request: Request):
-    """
-    Получить все схемы
-    """
-    collection_name = 'schemas'
-    return get_all(request, collection_name)
-
-
 def get_schema_by_contest_id(request: Request, contest_oid: str):
     """
     Получить схему по id конкурса
     """
     try:
         return get_one(request, 'schemas', {"contest_oid": contest_oid})
+    except Exception as e:
+        return Response_400()(request, str(e))
+
+
+def get_all_schemas(request: Request):
+    try:
+        return get_all(request, collection_name)
     except Exception as e:
         return Response_400()(request, str(e))

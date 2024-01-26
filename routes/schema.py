@@ -1,6 +1,6 @@
 from fastapi.routing import APIRouter
 from fastapi import Request
-from services.schema import create_schema, get_schema_by_contest_id
+from services.schema import create_schema, get_schema_by_contest_id, get_all_schemas
 from models.schema import Schemas
 
 router = APIRouter(
@@ -23,3 +23,11 @@ def get(request: Request, contest_oid: str = '65a767c72e0fe1554e0d3c9a'):
     Получить схему по oid конкурса
     """
     return get_schema_by_contest_id(request, contest_oid)
+
+
+@router.get("/get_all")
+def get_all(request: Request):
+    """
+    Получить все схемы
+    """
+    return get_all_schemas(request)

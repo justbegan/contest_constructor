@@ -81,3 +81,14 @@ def get_pagination(request: Request, collection_name: str, page: int, page_size:
         )
     except RequestValidationError as e:
         return Response_500()(request, str(e))
+
+
+def get_count(request: Request, collection_name: str, parameter: dict = {}):
+    """
+    Количество
+    """
+    try:
+        data = request.app.database[collection_name].count_documents(parameter)
+        return data
+    except:
+        return 0
