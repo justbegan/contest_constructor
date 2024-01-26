@@ -12,7 +12,7 @@ router = APIRouter(
 @router.post("/create_schema")
 def create(request: Request, data: Schemas):
     """
-    Создать заявку
+    Создать схему
     """
     return create_schema(request, data)
 

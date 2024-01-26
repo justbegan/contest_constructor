@@ -4,7 +4,7 @@ from services.statement import (
     create_statement, get_statements, get_statements_by_user,
     update_stamement,
 )
-from examples.statement import st_exam
+# from examples.statement import st_exam
 
 
 router = APIRouter(
@@ -14,7 +14,7 @@ router = APIRouter(
 
 
 @router.post("/create_statement")
-def create(request: Request, contest_oid: str = '65a767c72e0fe1554e0d3c9a', data: dict = st_exam):
+def create(request: Request, contest_oid: str, data: dict):
     """
     Создать заявку
     """

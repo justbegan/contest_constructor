@@ -11,12 +11,7 @@ def get_all(request: Request, collection_name: str, parameter: dict = {}):
     Получить все документы их коллекции
     """
     try:
-        data = request.app.database[collection_name].find(parameter)
-        result = []
-        for i in data:
-            i["_id"] = str(i["_id"])
-            result.append(i)
-        result = jsonable_encoder(result)
+        result = get_all_method(request, collection_name, parameter)
         return Response_200()(result)
     except RequestValidationError as e:
         return Response_500()(request, str(e))
@@ -42,6 +37,21 @@ def get_one_method(request: Request, collection_name: str, parameter: dict):
         data["_id"] = str(data["_id"])
         result = jsonable_encoder(data)
         return result
+    except:
+        return None
+
+
+def get_all_method(request: Request, collection_name: str, parameter: dict = {}):
+    """
+    Получить все документы их коллекции
+    """
+    try:
+        data = request.app.database[collection_name].find(parameter)
+        result = []
+        for i in data:
+            i["_id"] = str(i["_id"])
+            result.append(i)
+        return jsonable_encoder(result)
     except:
         return None
 

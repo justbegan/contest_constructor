@@ -8,6 +8,8 @@ from .crud.update import update_one
 from .crud.create import create_one
 from .crud.get import get_all, get_one_method, get_pagination
 from bson.objectid import ObjectId
+from datetime import datetime
+import calendar
 
 
 def get_statements(request: Request, contest_oid: str, page: int, page_size: int, parameter: dict = {}):
@@ -33,7 +35,7 @@ def create_statement(request: Request, contest_oid: str, data: dict):
     collection_name = get_contest_collection_name(request, contest_oid)
     try:
         schema = get_schema_for_statement(request, contest_oid)
-
+        print(schema)
     except Exception as e:
         return Response_400()(request, str(e))
     try:
@@ -41,6 +43,9 @@ def create_statement(request: Request, contest_oid: str, data: dict):
         validate(instance=data, schema=schema)
     except ValidationError as e:
         return Response_400()(request, e.message)
+    current_date_time = datetime.utcnow()
+    utc_time = calendar.timegm(current_date_time.utctimetuple())
+    data['created_at'] = utc_time
     return create_one(request, data, collection_name)
 
 
