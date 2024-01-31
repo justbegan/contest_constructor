@@ -3,3 +3,4 @@
 venv
 api_log.txt
 .env
+/media

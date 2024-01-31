@@ -20,7 +20,6 @@ def create_parameter(request: Request, data: dict):
 
 
 def get_parameters(request: Request):
-    collection_name = 'parameters'
     return get_all(request, collection_name)
 
 

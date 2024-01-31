@@ -4,6 +4,7 @@ from dotenv import dotenv_values
 from pymongo import MongoClient
 from fastapi import APIRouter
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 # import uvicorn
 # end libs
 
@@ -12,6 +13,8 @@ from routes.schema import router as sc_router
 from routes.classificator import router as cl_router
 from routes.contest import router as con_router
 from routes.parameter import router as par_router
+from routes.files import router as files_router
+from routes.document import router as docs_router
 
 
 config = dotenv_values(".env")
@@ -41,6 +44,10 @@ app.include_router(sc_router)
 app.include_router(cl_router)
 app.include_router(con_router)
 app.include_router(par_router)
+app.include_router(files_router)
+app.include_router(docs_router)
+
+app.mount('/media', StaticFiles(directory='media'), name='media')
 
 
 # if __name__ == "__main__":
