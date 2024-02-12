@@ -22,7 +22,7 @@ class Base_response():
 
 
 class Response_400(Base_response):
-    def __call__(self, request, text: str):
+    def __call__(self, request, text: str) -> JSONResponse:
         self.log(request, text, 400)
         return JSONResponse(
             {
@@ -33,7 +33,7 @@ class Response_400(Base_response):
 
 
 class Response_500(Base_response):
-    def __call__(self, request, text):
+    def __call__(self, request, text) -> JSONResponse:
         self.log(request, text, 400)
         return JSONResponse(
             {
@@ -44,7 +44,7 @@ class Response_500(Base_response):
 
 
 class Response_200():
-    def __call__(self, data):
+    def __call__(self, data) -> JSONResponse:
         return JSONResponse(
             {
                 "status": True,

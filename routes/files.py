@@ -15,6 +15,10 @@ router = APIRouter(
 
 @router.post("/upload-doc")
 def upload_file(file: UploadFile = File(...)):
+    """
+    Загрузить один документ
+    """
+    print(file)
     current_GMT = time.gmtime()
     time_stamp = calendar.timegm(current_GMT)
     if check_file(file):
@@ -24,7 +28,6 @@ def upload_file(file: UploadFile = File(...)):
     path = f'media/{file.filename}'
     with open(path, 'wb+') as buffer:
         shutil.copyfileobj(file.file, buffer)
-
     return {
         'file': file,
         'filename': path,
@@ -34,8 +37,10 @@ def upload_file(file: UploadFile = File(...)):
 
 @router.post("/upload-docs")
 def upload_files(files: List[UploadFile] = File(...)):
+    """
+    Загрузить многофайлов
+    """
     res = []
-
     for file in files:
 
         current_GMT = time.gmtime()

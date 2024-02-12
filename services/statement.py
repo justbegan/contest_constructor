@@ -1,15 +1,16 @@
 from fastapi import Request
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
-
-from core.responses import Response_400
-
-from .crud.update import update_one
-from .crud.create import create_one
-from .crud.get import get_all, get_one_method, get_pagination
 from bson.objectid import ObjectId
 from datetime import datetime
 import calendar
+
+from core.responses import Response_400, Response_200
+
+from .crud.update import update_one
+from .crud.create import create_one_method
+from .crud.get import get_all, get_one_method, get_pagination
+from .history import create_history
 
 
 def get_statements(request: Request, contest_oid: str, page: int, page_size: int, parameter: dict = {}):
@@ -45,7 +46,12 @@ def create_statement(request: Request, contest_oid: str, data: dict):
     current_date_time = datetime.utcnow()
     utc_time = calendar.timegm(current_date_time.utctimetuple())
     data['created_at'] = utc_time
-    return create_one(request, data, collection_name)
+    created_statement = create_one_method(request, data, collection_name)
+    try:
+        create_history(request, created_statement['_id'], 'Заявка создана')
+    except Exception as e:
+        raise Exception(e)
+    return Response_200()(created_statement)
 
 
 def update_stamement(request: Request, statement_oid: str, data: dict, contest_oid: str):
@@ -63,6 +69,9 @@ def update_stamement(request: Request, statement_oid: str, data: dict, contest_o
     except ValidationError as e:
         return Response_400()(request, str(e))
     parameter = {'_id': ObjectId(statement_oid)}
+
+    check_status(request, statement_oid, collection_name, data)
+
     return update_one(request, data, collection_name, parameter)
 
 
@@ -74,3 +83,12 @@ def get_schema_for_statement(request: Request, contest_oid: str):
 def get_contest_collection_name(request: Request, contest_oid: str):
     contest = get_one_method(request, 'contests', {"_id": ObjectId(contest_oid)})
     return contest.get("unique_name")
+
+
+def check_status(request: Request, statement_oid: str, collection_name: str, data: dict):
+    """
+    Провекрка, изменился ли статус
+    """
+    st_status = get_one_method(request, collection_name, {'_id': ObjectId(statement_oid)})
+    if st_status['status'] != data['status']:
+        create_history(request, statement_oid, f"Статус изменился на {data['status']}")
