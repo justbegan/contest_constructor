@@ -21,6 +21,7 @@ services:
       - "8010:8010"
     depends_on:
       - mongodb
-
+    volumes:
+      - ./media:/app/media 
 volumes:
   mongodb_data:
