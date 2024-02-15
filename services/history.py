@@ -1,21 +1,25 @@
-from .crud.create import create_one_method
 import calendar
 from datetime import datetime
 from fastapi.requests import Request
 
+from .crud.create import create_one_method
+from .crud.get import get_all
+
 collection_name = 'history'
 
 
-def create_history(request: Request, obj_id: str, text: str):
-    try:
-        current_date_time = datetime.utcnow()
-        utc_time = calendar.timegm(current_date_time.utctimetuple())
+def create_history(request: Request, statement_oid: str, text: str):
+    current_date_time = datetime.utcnow()
+    utc_time = calendar.timegm(current_date_time.utctimetuple())
 
-        obj = {
-            "obj_id": obj_id,
-            "created_at": utc_time,
-            "text": text
-        }
-        return create_one_method(request, obj, collection_name)
-    except Exception as e:
-        raise Exception(e)
+    obj = {
+        "statement_oid": statement_oid,
+        "created_at": utc_time,
+        "text": text
+    }
+    return create_one_method(request, obj, collection_name)
+
+
+def get_history_by_st_oid(request: Request, obj_id: str):
+    parameter = {"statement_oid": obj_id}
+    return get_all(request, collection_name, parameter)

@@ -47,10 +47,7 @@ def create_statement(request: Request, contest_oid: str, data: dict):
     utc_time = calendar.timegm(current_date_time.utctimetuple())
     data['created_at'] = utc_time
     created_statement = create_one_method(request, data, collection_name)
-    try:
-        create_history(request, created_statement['_id'], 'Заявка создана')
-    except Exception as e:
-        raise Exception(e)
+    create_history(request, created_statement['_id'], 'Заявка создана')
     return Response_200()(created_statement)
 
 
@@ -89,6 +86,10 @@ def check_status(request: Request, statement_oid: str, collection_name: str, dat
     """
     Провекрка, изменился ли статус
     """
-    st_status = get_one_method(request, collection_name, {'_id': ObjectId(statement_oid)})
-    if st_status['status'] != data['status']:
+    st = get_one_method(request, collection_name, {'_id': ObjectId(statement_oid)})
+    old_status = st.get('status', None)
+    new_status = data.get('status', None)
+    if old_status is None or new_status is None:
+        return None
+    if old_status != new_status:
         create_history(request, statement_oid, f"Статус изменился на {data['status']}")
