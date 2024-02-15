@@ -10,7 +10,7 @@ router = APIRouter(
 )
 
 
-@router.get("/get_parameters")
+@router.get("/get_history")
 def get(request: Request, statement_oid: str):
     """
     Получить историю заявки по oid Заявки

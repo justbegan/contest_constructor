@@ -62,7 +62,7 @@ def update_stamement(request: Request, statement_oid: str, data: dict, contest_o
         return Response_400()(request, str(e))
     try:
         data = {key: value for key, value in data.items() if key in schema.get("properties", {}) and value != ''}
-        validate(instance=data, schema=schema)
+        validate(instance=data, schema=get_mutated_schema(schema, data))
     except ValidationError as e:
         return Response_400()(request, str(e))
     parameter = {'_id': ObjectId(statement_oid)}
@@ -70,6 +70,27 @@ def update_stamement(request: Request, statement_oid: str, data: dict, contest_o
     check_status(request, statement_oid, collection_name, data)
 
     return update_one(request, data, collection_name, parameter)
+
+
+def get_mutated_schema(schema: dict, data: dict):
+    """
+    Получить урезанную схему, чтобы валедировать только отправленные поля
+    если front отправил status я проверяю и обновляю только это поле
+    """
+    try:
+        new_properties = {}
+        new_required = []
+        for key, value in schema['properties'].items():
+            if key in data:
+                new_properties[key] = value
+        for i2 in schema['required']:
+            if i2 in data:
+                new_required.append(i2)
+        schema['properties'] = new_properties
+        schema['required'] = new_required
+    except:
+        pass
+    return schema
 
 
 def get_schema_for_statement(request: Request, contest_oid: str):
@@ -92,4 +113,10 @@ def check_status(request: Request, statement_oid: str, collection_name: str, dat
     if old_status is None or new_status is None:
         return None
     if old_status != new_status:
-        create_history(request, statement_oid, f"Статус изменился на {data['status']}")
+        try:
+            new_status_obj = get_one_method(request, 'classificators', {"_id": ObjectId(new_status['class'])})
+            new_status_value = new_status['value']
+            new_status_title = list(filter(lambda x: new_status_value == x['id'], new_status_obj['data']))[0]['title']
+        except:
+            new_status_title = 'None'
+        create_history(request, statement_oid, f"Статус изменился на '{new_status_title}'")
