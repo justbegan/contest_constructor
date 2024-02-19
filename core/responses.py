@@ -1,10 +1,11 @@
 from fastapi.responses import JSONResponse
 import logging
+from datetime import datetime
 
 
 logging.basicConfig(
-    filename="api_log.txt",
-    filemode="a",
+    filename=f"logs/api log-{datetime.now():%Y-%m-%d}.txt",
+    filemode="w",
     level=logging.DEBUG
 )
 logger = logging.getLogger(__name__)

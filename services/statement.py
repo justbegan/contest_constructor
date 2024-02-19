@@ -2,8 +2,6 @@ from fastapi import Request
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 from bson.objectid import ObjectId
-from datetime import datetime
-import calendar
 
 from core.responses import Response_400, Response_200
 
@@ -11,6 +9,8 @@ from .crud.update import update_one
 from .crud.create import create_one_method
 from .crud.get import get_all, get_one_method, get_pagination
 from .history import create_history
+from .fields.utctime import get_current_utc_time
+from .fields.current_user import get_current_user
 
 
 def get_statements(request: Request, contest_oid: str, page: int, page_size: int, parameter: dict = {}):
@@ -43,9 +43,8 @@ def create_statement(request: Request, contest_oid: str, data: dict):
         validate(instance=data, schema=schema)
     except ValidationError as e:
         return Response_400()(request, e.message)
-    current_date_time = datetime.utcnow()
-    utc_time = calendar.timegm(current_date_time.utctimetuple())
-    data['created_at'] = utc_time
+    data['created_at'] = get_current_utc_time
+    data['author'] = get_current_user
     created_statement = create_one_method(request, data, collection_name)
     create_history(request, created_statement['_id'], 'Заявка создана')
     return Response_200()(created_statement)
