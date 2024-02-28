@@ -17,6 +17,7 @@ from routes.files import router as files_router
 from routes.document import router as docs_router
 from routes.history import router as history_router
 from routes.comment import router as comment_router
+from routes.news import router as news_router
 from core.responses import Response_500
 from services.fields.current_user import get_current_user
 
@@ -52,6 +53,7 @@ app.include_router(files_router)
 app.include_router(docs_router)
 app.include_router(history_router)
 app.include_router(comment_router)
+app.include_router(news_router)
 
 app.mount('/media', StaticFiles(directory='media'), name='media')
 
