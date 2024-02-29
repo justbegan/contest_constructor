@@ -7,6 +7,7 @@ from .crud.update import update_one
 from .crud.delete import delete_one
 from models.news import News
 from services.fields.utctime import get_current_utc_time
+from services.fields.current_user import get_current_profile
 from core.responses import Response_400
 
 collection_name = 'news'
@@ -16,7 +17,8 @@ def get_all_news(request: Request):
     """
     Получить список всех конкурсов
     """
-    return get_all(request, collection_name)
+    parameter = {"contest_oid": get_current_profile(request, 'contest')}
+    return get_all(request, collection_name, parameter)
 
 
 def create_news(request: Request, data: News):
@@ -24,6 +26,7 @@ def create_news(request: Request, data: News):
     Создать новость
     """
     obj = data.dict()
+    obj['contest'] = get_current_profile(request, 'contest')
     obj['created_at'] = get_current_utc_time()
     obj['updated_at'] = get_current_utc_time()
     return create_one(request, obj, collection_name)

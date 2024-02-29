@@ -18,7 +18,6 @@ def upload_file(file: UploadFile = File(...)):
     """
     Загрузить один документ
     """
-    print(file)
     current_GMT = time.gmtime()
     time_stamp = calendar.timegm(current_GMT)
     if check_file(file):

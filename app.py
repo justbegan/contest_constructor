@@ -61,9 +61,6 @@ app.mount('/media', StaticFiles(directory='media'), name='media')
 @app.middleware("http")
 async def before_request_middleware(request: Request, call_next):
     try:
-        debug = int(config.get("DEBUG", 0))
-        if not debug:
-            print(get_current_user(request))
         response = await call_next(request)
     except Exception as e:
         return Response_500()(request, str(e))

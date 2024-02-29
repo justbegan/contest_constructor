@@ -1,5 +1,6 @@
 from fastapi import Request
 import jwt
+from requests import request as r
 
 
 def get_current_user(request: Request) -> dict:
@@ -29,3 +30,23 @@ def get_current_user(request: Request) -> dict:
         raise Exception(e1)
     except jwt.InvalidTokenError as e2:
         raise Exception(e2)
+
+
+def get_current_profile(request: Request, parameter: str = None) -> dict:
+    url = 'http://127.0.0.1:8888/profile/api'
+    response = r(
+        method='GET',
+        headers={
+            "Content-Type": "application/json",
+            "Accept": "*/*",
+            "Authorization": str(request.headers.get("Authorization"))
+        },
+        url=url
+    )
+    try:
+        if parameter:
+            return response.json()[parameter]
+        else:
+            return response.json()
+    except:
+        raise Exception("unauthorized or contest not selected")
