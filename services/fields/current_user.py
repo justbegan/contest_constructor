@@ -1,6 +1,10 @@
 from fastapi import Request
 import jwt
 from requests import request as r
+from dotenv import dotenv_values
+
+
+config = dotenv_values(".env")
 
 
 def get_current_user(request: Request) -> dict:
@@ -33,7 +37,8 @@ def get_current_user(request: Request) -> dict:
 
 
 def get_current_profile(request: Request, parameter: str = None) -> dict:
-    url = 'http://127.0.0.1:8888/profile/api'
+    apigetaway = config.get('PROFILE_URL')
+    url = f'{apigetaway}/profile/api'
     response = r(
         method='GET',
         headers={

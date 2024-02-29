@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi import Request
 # end libs
 
+from core.responses import logger
 from routes.statement import router as st_router
 from routes.schema import router as sc_router
 from routes.classificator import router as cl_router
@@ -39,9 +40,9 @@ app.add_middleware(
 )
 
 app.mongodb_client = MongoClient(
-    config["ATLAS_URI"],
-    username=config.get("DB_USER", None),
-    password=config.get("DB_PASS", None)
+    config.get("ATLAS_URI"),
+    username=config.get("DB_USER"),
+    password=config.get("DB_PASS")
 )
 app.database = app.mongodb_client[config["DB_NAME"]]
 app.include_router(st_router)
@@ -61,7 +62,11 @@ app.mount('/media', StaticFiles(directory='media'), name='media')
 @app.middleware("http")
 async def before_request_middleware(request: Request, call_next):
     try:
+        debug = int(config.get("DEBUG", 0))
+        if not debug:
+            get_current_user(request)
         response = await call_next(request)
+        return response
     except Exception as e:
+        logger.error(e)
         return Response_500()(request, str(e))
-    return response

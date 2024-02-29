@@ -19,7 +19,7 @@ class Base_response():
             "text": text,
             "code": code
         }
-        logger.debug(log_message)
+        logger.error(log_message)
 
 
 class Response_400(Base_response):
