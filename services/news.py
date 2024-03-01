@@ -1,7 +1,7 @@
 from fastapi import Request
 from bson import ObjectId
 
-from .crud.get import get_all
+from .crud.get import get_all, get_one
 from .crud.create import create_one
 from .crud.update import update_one
 from .crud.delete import delete_one
@@ -19,6 +19,11 @@ def get_all_news(request: Request):
     """
     parameter = {"contest_oid": get_current_profile(request, 'contest')}
     return get_all(request, collection_name, parameter)
+
+
+def get_news_by_id(request: Request, oid: str):
+    parameter = {"_id": ObjectId(oid)}
+    return get_one(request, collection_name, parameter)
 
 
 def create_news(request: Request, data: News):

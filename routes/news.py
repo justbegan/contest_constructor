@@ -1,7 +1,7 @@
 from fastapi.routing import APIRouter
 from fastapi import Request
 
-from services.news import get_all_news, create_news, update_news, delete_news
+from services.news import get_all_news, get_news_by_id, create_news, update_news, delete_news
 from models.news import News
 
 
@@ -17,6 +17,12 @@ def get(request: Request):
     Получить все новости
     """
     return get_all_news(request)
+
+
+@router.get("/get_by_id")
+def get_by_id(request: Request, oid: str):
+    """Получить по id"""
+    return get_news_by_id(request, oid)
 
 
 @router.post("/create_news")
