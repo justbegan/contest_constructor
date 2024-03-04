@@ -17,7 +17,7 @@ def get_all_news(request: Request):
     """
     Получить список всех конкурсов
     """
-    parameter = {"contest_oid": get_current_profile(request, 'contest')}
+    parameter = {"contest": get_current_profile(request, 'contest')}
     return get_all(request, collection_name, parameter)
 
 
