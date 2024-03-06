@@ -36,7 +36,19 @@ def get_current_user(request: Request) -> dict:
         raise Exception(e2)
 
 
-def get_current_profile(request: Request, parameter: str = None) -> dict:
+def get_current_profile(request: Request) -> dict:
+    """
+    {
+    "id": 1,
+    "first_name": "f_name",
+    "last_name": "l_name",
+    "email": "test@mail.ru",
+    "profile": {
+        "id": 1,
+        "contest": "65a766112e0fe1554e0d3c99"
+        }
+    }
+    """
     apigetaway = config.get('PROFILE_URL')
     url = f'{apigetaway}/profile/api'
     response = r(
@@ -49,9 +61,36 @@ def get_current_profile(request: Request, parameter: str = None) -> dict:
         url=url
     )
     try:
-        if parameter:
-            return response.json()[parameter]
-        else:
-            return response.json()
+        return response.json()
+    except:
+        raise Exception("unauthorized or contest not selected")
+
+
+def get_profile_by_user_id(request: Request, user_id: int) -> dict:
+    """
+    {
+    "id": 1,
+    "first_name": "f_name",
+    "last_name": "l_name",
+    "email": "test@mail.ru",
+    "profile": {
+        "id": 1,
+        "contest": "65a766112e0fe1554e0d3c99"
+        }
+    }
+    """
+    apigetaway = config.get('PROFILE_URL')
+    url = f'{apigetaway}/profile/api/by_id?user_id={user_id}'
+    response = r(
+        method='GET',
+        headers={
+            "Content-Type": "application/json",
+            "Accept": "*/*",
+            "Authorization": str(request.headers.get("Authorization"))
+        },
+        url=url
+    )
+    try:
+        return response.json()
     except:
         raise Exception("unauthorized or contest not selected")

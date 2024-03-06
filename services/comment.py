@@ -1,8 +1,8 @@
 from fastapi import Request
-from .crud.get import get_all
+from .crud.get import get_all_method
 from .crud.create import create_one
-from .fields.current_user import get_current_user
-from .fields.utctime import get_current_utc_time
+from .fields.current_user import get_current_user, get_profile_by_user_id
+from models.comments import Comments
 
 
 collection_name = 'comments'
@@ -10,16 +10,26 @@ collection_name = 'comments'
 
 def get_all_comments_by_statement_oid(request: Request, statement_oid: str):
     """
-    Получить список всех конкурсов
+    Получить список всех
     """
-    parameter = {"statment_oid": statement_oid}
-    return get_all(request, collection_name, parameter)
+    parameter = {"statement_oid": statement_oid}
+    comments = get_all_method(request, collection_name, parameter)
+    return add_user_name(request, comments)
 
 
-def create_comment(request: Request, data: dict):
+def create_comment(request: Request, data: Comments):
     """
     Создать комментарий
     """
-    data['author'] = get_current_user(request)
-    data['created_at'] = get_current_utc_time()
+
+    data.author = get_current_user(request)
     return create_one(request, data, collection_name)
+
+
+def add_user_name(request: Request, comments: list):
+    for c in comments:
+        try:
+            c['author_name'] = get_profile_by_user_id(request, c['author'])['username']
+        except:
+            c['author_name'] = None
+    return comments

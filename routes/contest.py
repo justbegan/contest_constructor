@@ -5,7 +5,7 @@ from models.contest import Contests
 
 
 router = APIRouter(
-    prefix='/contes',
+    prefix='/contest',
     tags=['Конкурсы']
 )
 

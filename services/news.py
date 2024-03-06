@@ -17,7 +17,10 @@ def get_all_news(request: Request):
     """
     Получить список всех конкурсов
     """
-    parameter = {"contest": get_current_profile(request, 'contest')}
+    try:
+        parameter = {"contest": get_current_profile(request)['profile']['contest']}
+    except:
+        raise Exception("user contest not found")
     return get_all(request, collection_name, parameter)
 
 
@@ -31,7 +34,10 @@ def create_news(request: Request, data: News):
     Создать новость
     """
     obj = data.dict()
-    obj['contest'] = get_current_profile(request, 'contest')
+    try:
+        obj['contest'] = get_current_profile(request)['profile']['contest']
+    except:
+        raise Exception("user contest not found")
     obj['created_at'] = get_current_utc_time()
     obj['updated_at'] = get_current_utc_time()
     return create_one(request, obj, collection_name)
