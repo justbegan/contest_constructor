@@ -17,7 +17,7 @@ def create_history(request: Request, statement_oid: str, text: str):
         "statement_oid": statement_oid,
         "created_at": utc_time,
         "text": text,
-        "author": get_current_profile(request)
+        "author": get_current_profile(request)['username']
     }
     return create_one_method(request, obj, collection_name)
 
