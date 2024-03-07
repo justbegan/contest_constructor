@@ -4,6 +4,7 @@ from fastapi.requests import Request
 
 from .crud.create import create_one_method
 from .crud.get import get_all
+from .fields.current_user import get_current_profile
 
 collection_name = 'history'
 
@@ -15,7 +16,8 @@ def create_history(request: Request, statement_oid: str, text: str):
     obj = {
         "statement_oid": statement_oid,
         "created_at": utc_time,
-        "text": text
+        "text": text,
+        "author": get_current_profile(request)
     }
     return create_one_method(request, obj, collection_name)
 
