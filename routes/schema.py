@@ -34,10 +34,10 @@ def get(request: Request, contest_oid: str = '65a767c72e0fe1554e0d3c9a'):
     return get_schema_by_contest_id(request, contest_oid)
 
 
-@router.get("/get_parameter_by_id")
+@router.get("/get_schema_by_id")
 def get_by_id(request: Request, id: str):
     """
-    Получить все параметры
+    Получить схему по id
     """
     return get_schema_by_id(request, id)
 

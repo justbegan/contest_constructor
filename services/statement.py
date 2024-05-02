@@ -7,7 +7,7 @@ from core.responses import Response_400, Response_200
 
 from .crud.update import update_one
 from .crud.create import create_one_method
-from .crud.get import get_all, get_one_method, get_pagination
+from .crud.get import get_all, get_one_method, get_pagination, get_one
 from .history import create_history
 from .fields.utctime import get_current_utc_time
 from .fields.current_user import get_current_user
@@ -19,6 +19,14 @@ def get_statements(request: Request, contest_oid: str, page: int, page_size: int
     """
     collection_name = get_contest_collection_name(request, contest_oid)
     return get_pagination(request, collection_name, page, page_size, parameter)
+
+
+def get_statements_by_id(request: Request, contest_oid: str, statement_oid: str):
+    """
+    Получить заявку по id
+    """
+    collection_name = get_contest_collection_name(request, contest_oid)
+    return get_one(request, collection_name, {'_id': ObjectId(statement_oid)})
 
 
 def get_statements_by_user(request: Request, contest_oid: str, user_oid: str):

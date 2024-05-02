@@ -2,7 +2,7 @@ from fastapi.routing import APIRouter
 from fastapi import Request
 from services.statement import (
     create_statement, get_statements, get_statements_by_user,
-    update_stamement,
+    update_stamement, get_statements_by_id
 )
 # from examples.statement import st_exam
 
@@ -36,6 +36,14 @@ def get_by_user(request: Request, contest_oid: str = '65a767c72e0fe1554e0d3c9a',
     Получить все заявки по oid конкурса и user_oid
     """
     return get_statements_by_user(request, contest_oid, user_oid)
+
+
+@router.get("/get_statements_by_id")
+def get_by_id(request: Request, contest_oid: str = '65a767c72e0fe1554e0d3c9a', statement_id: str = '21412321321321'):
+    """
+    Получить все заявки по oid конкурса и user_oid
+    """
+    return get_statements_by_id(request, contest_oid, statement_id)
 
 
 @router.put("/update_statement")
