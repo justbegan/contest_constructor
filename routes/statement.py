@@ -4,6 +4,7 @@ from services.statement import (
     create_statement, get_statements, get_statements_by_user,
     update_stamement, get_statements_by_id
 )
+from services.fields.current_user import get_current_profile
 # from examples.statement import st_exam
 
 
@@ -39,10 +40,13 @@ def get_by_user(request: Request, contest_oid: str = '65a767c72e0fe1554e0d3c9a',
 
 
 @router.get("/get_statements_by_id")
-def get_by_id(request: Request, contest_oid: str = '65a767c72e0fe1554e0d3c9a', statement_id: str = '21412321321321'):
+def get_by_id(request: Request, contest_oid: str = None, statement_id: str = '21412321321321'):
     """
     Получить все заявки по oid конкурса и user_oid
     """
+    if contest_oid is None:
+        profile = get_current_profile(request)
+        contest_oid = profile['profile']['contest']
     return get_statements_by_id(request, contest_oid, statement_id)
 
 
