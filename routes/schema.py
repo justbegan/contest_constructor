@@ -3,6 +3,7 @@ from fastapi import Request
 from services.schema import (create_schema, update_schema, get_schema_by_contest_id, get_all_schemas,
                              get_schema_by_id)
 from models.schema import Schemas
+from services.fields.current_user import get_current_profile
 
 router = APIRouter(
     prefix='/schema',
@@ -27,10 +28,13 @@ def update(request: Request, id: str, data: Schemas):
 
 
 @router.get("/get_schema")
-def get(request: Request, contest_oid: str = '65a767c72e0fe1554e0d3c9a'):
+def get(request: Request, contest_oid: str = None):
     """
     Получить схему по oid конкурса
     """
+    if contest_oid is None:
+        profile = get_current_profile(request)
+        contest_oid = profile['profile']['contest']
     return get_schema_by_contest_id(request, contest_oid)
 
 
