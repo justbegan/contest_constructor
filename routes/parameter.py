@@ -1,6 +1,6 @@
 from fastapi.routing import APIRouter
 from fastapi import Request
-from services.parameter import create_parameter, get_parameters, delete_parameter_by_oid
+from services.parameter import create_parameter, get_parameters, delete_parameter_by_oid, update_parameter
 
 
 router = APIRouter(
@@ -31,3 +31,8 @@ def delete(request: Request, parameter_oid: str):
     Удалить параметр по oid
     """
     return delete_parameter_by_oid(request, parameter_oid)
+
+
+@router.put("/update_parameter")
+def update(request: Request, data: dict, parameter_oid: str):
+    return update_parameter(request, data, parameter_oid)
