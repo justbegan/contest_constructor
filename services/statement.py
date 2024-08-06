@@ -102,11 +102,15 @@ def get_mutated_schema(schema: dict, data: dict):
 
 def get_schema_for_statement(request: Request, contest_oid: str):
     schema = get_one_method(request, 'schemas', {"contest_oid": contest_oid})
+    if schema is None:
+        raise Exception("Schemas not found")
     return schema
 
 
 def get_contest_collection_name(request: Request, contest_oid: str):
     contest = get_one_method(request, 'contests', {"_id": ObjectId(contest_oid)})
+    if contest is None:
+        raise Exception("Contests not found")
     return contest.get("unique_name")
 
 
@@ -115,6 +119,8 @@ def check_status(request: Request, statement_oid: str, collection_name: str, dat
     Провекрка, изменился ли статус
     """
     st = get_one_method(request, collection_name, {'_id': ObjectId(statement_oid)})
+    if st is None:
+        raise Exception("status not found")
     old_status = st.get('status', None)
     new_status = data.get('status', None)
     if old_status is None or new_status is None:
@@ -122,6 +128,8 @@ def check_status(request: Request, statement_oid: str, collection_name: str, dat
     if old_status != new_status:
         try:
             new_status_obj = get_one_method(request, 'classificators', {"_id": ObjectId(new_status['class'])})
+            if new_status_obj is None:
+                raise Exception("status not found")
             new_status_value = new_status['value']
             new_status_title = list(filter(lambda x: new_status_value == x['id'], new_status_obj['data']))[0]['title']
         except:

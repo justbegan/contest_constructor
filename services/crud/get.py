@@ -3,6 +3,7 @@ from fastapi.encoders import jsonable_encoder
 import math
 from core.responses import Response_200
 from fastapi.responses import JSONResponse
+from services.fields.current_user import get_current_profile
 
 
 def get_all(request: Request, collection_name: str, parameter: dict = {}):
@@ -53,6 +54,10 @@ def get_pagination(request: Request, collection_name: str, page: int, page_size:
     """
     Получить пагинацию
     """
+    user_proflie = get_current_profile(request).get("profile")
+    parameter['user_oid'] = str(user_proflie.get("user"))
+    if user_proflie.get("role_name") in ["admin", "moder"]:
+        parameter.pop("user_oid")
     PAGE_SIZE = page_size
     skip = page * PAGE_SIZE - PAGE_SIZE
     collection_size = request.app.database[collection_name].count_documents(parameter)
