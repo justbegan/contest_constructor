@@ -92,7 +92,7 @@ def get_count(request: Request, collection_name: str, parameter: dict = {}):
 
 def get_main_table_fields(request: Request, contest_oid: str):
     try:
-        collection_name = "main_table_fileds"
+        collection_name = "main_table_fields"
         return get_one_method(request, collection_name, {"contest_oid": contest_oid})['fields']
     except:
         return []
