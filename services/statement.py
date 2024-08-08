@@ -52,7 +52,7 @@ def create_statement(request: Request, contest_oid: str, data: dict):
     except ValidationError as e:
         return Response_400()(request, e.message)
     data['created_at'] = get_current_utc_time()
-    data['author'] = get_current_user()
+    data['user_oid'] = get_current_user(request)
     created_statement = create_one_method(request, data, collection_name)
     create_history(request, created_statement['_id'], 'Заявка создана')
     return Response_200()(created_statement)
