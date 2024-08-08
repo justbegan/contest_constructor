@@ -1,5 +1,5 @@
 from fastapi.routing import APIRouter
-from services.contest import get_all_contests, create_contest
+from services.contest import get_all_contests, create_contest, get_contest_by_id
 from fastapi import Request
 from models.contest import Contests
 
@@ -16,6 +16,14 @@ def get(request: Request):
     Получить все конкурсы
     """
     return get_all_contests(request)
+
+
+@router.get("/get_contest_by_id")
+def get_by_id(request: Request, id: str):
+    """
+    Получить по id
+    """
+    return get_contest_by_id(request, id)
 
 
 @router.post("/create_contest")

@@ -1,5 +1,7 @@
 from fastapi import Request
-from .crud.get import get_all_method, get_count
+from bson import ObjectId
+
+from .crud.get import get_all_method, get_count, get_one
 from .crud.create import create_one
 from models.contest import Contests
 from core.responses import Response_200
@@ -27,3 +29,10 @@ def create_contest(request: Request, data: Contests):
     Создать конкурс
     """
     return create_one(request, data, collection_name)
+
+
+def get_contest_by_id(request: Request, id: str):
+    """
+    Получить конкурс по id
+    """
+    return get_one(request, collection_name, {"_id": ObjectId(id)})
