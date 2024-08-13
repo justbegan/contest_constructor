@@ -2,7 +2,7 @@ from fastapi.routing import APIRouter
 from fastapi import Request
 from services.statement import (
     create_statement, get_statements, get_statements_by_user,
-    update_stamement, get_statements_by_id, search_statements
+    update_stamement, get_statements_by_id
 )
 from services.fields.current_user import get_current_profile
 # from examples.statement import st_exam
@@ -27,26 +27,14 @@ def create(request: Request, data: dict, contest_oid: str = None):
 
 @router.post("/get_statements")
 def get(request: Request, contest_oid: str = None,
-        page: int = 1, page_size: int = 10, parameter: dict = {}):
+        page: int = 1, page_size: int = 10, parameter: dict = {}, regular: str = None):
     """
     Получить все заявки по oid конкурса
     """
     if contest_oid is None:
         profile = get_current_profile(request)
         contest_oid = profile['profile']['contest']
-    return get_statements(request, contest_oid, page, page_size, parameter)
-
-
-@router.get("/search_statements")
-def search(request: Request, contest_oid: str = None,
-           page: int = 1, page_size: int = 10, regular: str = ""):
-    """
-    Получить все заявки по oid конкурса
-    """
-    if contest_oid is None:
-        profile = get_current_profile(request)
-        contest_oid = profile['profile']['contest']
-    return search_statements(request, contest_oid, page, page_size, regular)
+    return get_statements(request, contest_oid, page, page_size, parameter, regular)
 
 
 @router.get("/get_statements_by_user")

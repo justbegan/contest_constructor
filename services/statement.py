@@ -14,25 +14,25 @@ from .fields.current_user import get_current_user
 from .fields.new_status import new_status
 
 
-def get_statements(request: Request, contest_oid: str, page: int, page_size: int, parameter: dict = {}):
+def get_statements(
+    request: Request,
+    contest_oid: str,
+    page: int,
+    page_size: int,
+    parameter: dict = {},
+    regular: str = None
+):
     """
     Получить все заявки по oid конкурса
     """
     collection_name = get_contest_collection_name(request, contest_oid)
+    if regular:
+        """поиск по регулярному выражению"""
+        parameter["$or"] = [
+            {field: {"$regex": regular, "$options": "i"}
+             } for field in get_one_method(request, collection_name, {}).keys()
+        ]
     return get_pagination(request, collection_name, page, page_size, parameter)
-
-
-def search_statements(request: Request, contest_oid: str, page: int, page_size: int, search_word: str):
-    """
-    Поиск по регулярному выражению
-    """
-    collection_name = get_contest_collection_name(request, contest_oid)
-    query = {
-        "$or": [
-            {field: {"$regex": search_word, "$options": "i"}
-             } for field in get_one_method(request, collection_name, {}).keys()]}
-
-    return get_pagination(request, collection_name, page, page_size, query)
 
 
 def get_statements_by_id(request: Request, contest_oid: str, statement_oid: str):
