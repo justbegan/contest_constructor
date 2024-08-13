@@ -11,6 +11,7 @@ from .crud.get import get_all, get_one_method, get_pagination, get_one
 from .history import create_history
 from .fields.utctime import get_current_utc_time
 from .fields.current_user import get_current_user
+from .fields.new_status import new_status
 
 
 def get_statements(request: Request, contest_oid: str, page: int, page_size: int, parameter: dict = {}):
@@ -19,6 +20,19 @@ def get_statements(request: Request, contest_oid: str, page: int, page_size: int
     """
     collection_name = get_contest_collection_name(request, contest_oid)
     return get_pagination(request, collection_name, page, page_size, parameter)
+
+
+def search_statements(request: Request, contest_oid: str, page: int, page_size: int, search_word: str):
+    """
+    Поиск по регулярному выражению
+    """
+    collection_name = get_contest_collection_name(request, contest_oid)
+    query = {
+        "$or": [
+            {field: {"$regex": search_word, "$options": "i"}
+             } for field in get_one_method(request, collection_name, {}).keys()]}
+
+    return get_pagination(request, collection_name, page, page_size, query)
 
 
 def get_statements_by_id(request: Request, contest_oid: str, statement_oid: str):
@@ -46,13 +60,16 @@ def create_statement(request: Request, contest_oid: str, data: dict):
         schema = get_schema_for_statement(request, contest_oid)
     except Exception as e:
         return Response_400()(request, str(e))
+
+    data['created_at'] = get_current_utc_time()
+    data['user_oid'] = get_current_user(request)
+    data['status'] = new_status(request, contest_oid)
+
     try:
         data = {key: value for key, value in data.items() if key in schema.get("properties", {}) and value != ''}
         validate(instance=data, schema=schema)
     except ValidationError as e:
         return Response_400()(request, e.message)
-    data['created_at'] = get_current_utc_time()
-    data['user_oid'] = get_current_user(request)
     created_statement = create_one_method(request, data, collection_name)
     create_history(request, created_statement['_id'], 'Заявка создана')
     return Response_200()(created_statement)
