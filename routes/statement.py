@@ -26,15 +26,22 @@ def create(request: Request, data: dict, contest_oid: str = None):
 
 
 @router.post("/get_statements")
-def get(request: Request, contest_oid: str = None,
-        page: int = 1, page_size: int = 10, parameter: dict = {}, regular: str = None):
+def get(
+    request: Request,
+    contest_oid: str = None,
+    page: int = 1,
+    page_size: int = 10,
+    parameter: dict = {},
+    sort: dict = {"_id": 1},
+    regular: str = None
+):
     """
     Получить все заявки по oid конкурса
     """
     if contest_oid is None:
         profile = get_current_profile(request)
         contest_oid = profile['profile']['contest']
-    return get_statements(request, contest_oid, page, page_size, parameter, regular)
+    return get_statements(request, contest_oid, page, page_size, parameter, sort, regular)
 
 
 @router.get("/get_statements_by_user")

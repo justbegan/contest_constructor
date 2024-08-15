@@ -20,6 +20,7 @@ def get_statements(
     page: int,
     page_size: int,
     parameter: dict = {},
+    sort: dict = {},
     regular: str = None
 ):
     """
@@ -32,7 +33,7 @@ def get_statements(
             {field: {"$regex": regular, "$options": "i"}
              } for field in get_one_method(request, collection_name, {}).keys()
         ]
-    return get_pagination(request, collection_name, page, page_size, parameter)
+    return get_pagination(request, collection_name, page, page_size, parameter, sort)
 
 
 def get_statements_by_id(request: Request, contest_oid: str, statement_oid: str):

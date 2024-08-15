@@ -50,7 +50,14 @@ def get_all_method(request: Request, collection_name: str, parameter: dict = {})
         return None
 
 
-def get_pagination(request: Request, collection_name: str, page: int, page_size: int, parameter: dict = {}):
+def get_pagination(
+    request: Request,
+    collection_name: str,
+    page: int,
+    page_size: int,
+    parameter: dict = {},
+    sort: dict = {}
+):
     """
     Получить пагинацию
     """
@@ -62,7 +69,7 @@ def get_pagination(request: Request, collection_name: str, page: int, page_size:
     skip = page * PAGE_SIZE - PAGE_SIZE
     collection_size = request.app.database[collection_name].count_documents(parameter)
     pages_count = math.ceil(collection_size / PAGE_SIZE)
-    data = request.app.database[collection_name].find(parameter).skip(skip).limit(PAGE_SIZE)
+    data = request.app.database[collection_name].find(parameter).sort(sort).skip(skip).limit(PAGE_SIZE)
     result = []
     for i in data:
         i["_id"] = str(i["_id"])
