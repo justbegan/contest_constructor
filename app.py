@@ -19,6 +19,9 @@ from routes.document import router as docs_router
 from routes.history import router as history_router
 from routes.comment import router as comment_router
 from routes.news import router as news_router
+from routes.district import router as district
+from routes.settlement import router as settlement
+from routes.locality import router as locality
 from core.responses import Response_500
 from services.fields.current_user import get_current_user
 
@@ -55,6 +58,9 @@ app.include_router(docs_router)
 app.include_router(history_router)
 app.include_router(comment_router)
 app.include_router(news_router)
+app.include_router(district)
+app.include_router(settlement)
+app.include_router(locality)
 
 app.mount('/media', StaticFiles(directory='media'), name='media')
 
