@@ -16,7 +16,7 @@ def create(request: Request, data: Documents):
     return create_document(request, data)
 
 
-@router.get("/")
+@router.get("/get_all")
 def get_all(request: Request):
     return get_all_documents(request)
 
