@@ -6,6 +6,7 @@ class Documents(BaseModel):
     description: str = Field(..., min_length=1)
     date: int = Field(..., ge=0)
     file_url: HttpUrl = Field(...)
+    location: str = Field(..., min_length=1)
     created_at: str = None
 
     class Config:
