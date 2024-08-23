@@ -9,7 +9,7 @@ collection_name = "classificators"
 
 def get_locality_by_settlement_id(request: Request, id: int):
     parameter = {
-        "_id": ObjectId("66c7e83978c3b5b05adb26d9"),
+        "_id": ObjectId("66c8188278c3b5b05adb26e2"),
     }
     data = get_one_method(request, collection_name, parameter)
 
