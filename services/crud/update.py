@@ -4,7 +4,7 @@ from .get import get_one_method
 
 
 def update_one(request: Request, data: dict, collection_name: str, parameter: dict):
-    data = {"$set": delete_created_at(data)}
+    data = {"$set": data}
     request.app.database[collection_name].update_one(parameter, data)
     updated_object = get_one_method(request, collection_name, parameter)
     result = {

@@ -15,7 +15,7 @@ collection_name = 'news'
 
 def get_all_news(request: Request):
     """
-    Получить список всех конкурсов
+    Получить список всех новостей
     """
     try:
         parameter = {"contest": get_current_profile(request)['profile']['contest']}

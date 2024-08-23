@@ -40,7 +40,7 @@ def get_all_method(request: Request, collection_name: str, parameter: dict = {})
     Получить все документы их коллекции
     """
     try:
-        data = request.app.database[collection_name].find(parameter)
+        data = request.app.database[collection_name].find(parameter).sort({"_id": -1})
         result = []
         for i in data:
             i["_id"] = str(i["_id"])
